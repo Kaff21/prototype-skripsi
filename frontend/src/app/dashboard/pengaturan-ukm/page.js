@@ -28,7 +28,7 @@ export default function PengaturanUKMPage() {
       if (user && user.organization_id) {
         // Tambahkan timestamp (?t=) untuk membunuh cache browser
         const res = await axios.get(
-          `http://localhost:5000/api/organizations/${user.organization_id}?t=${new Date().getTime()}`
+          `${API_BASE_URL}/api/organizations/${user.organization_id}?t=${new Date().getTime()}`
         );
         setUkmData(res.data);
       } else {

@@ -6,10 +6,9 @@ export default function Navbar({
   onLogout, 
   onToggleSidebar, 
   activeMenu, 
-  searchQuery, 
-  onSearchChange, 
   userName, 
   userOrg,
+  userAvatar,
   onNavigate 
 }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -19,9 +18,13 @@ export default function Navbar({
     kegiatan: "Manajemen Kegiatan",
     anggota: "Daftar Anggota Aktif",
     persetujuan: "Persetujuan Anggota",
-    manajemen_ukm: "Master Data UKM",
+    birokrasi: "Birokrasi Kegiatan",
+    ukm: "Manajemen UKM",
+    manajemen_akun: "Manajemen Akun",
     pengaturan: "Pengaturan Sistem",
-    profile: "Profil Pengguna"
+    "pengaturan-ukm": "Pengaturan UKM",
+    profil: "Profil Pengguna",
+    scanner: "Scan Absensi"
   };
 
   // Logika tutup dropdown saat klik di luar
@@ -51,30 +54,18 @@ export default function Navbar({
         </h2>
       </div>
 
-      {/* TENGAH: Search Bar */}
-      <div className="flex-1 max-w-[180px] sm:max-w-md mx-2">
-        <div className="relative">
-          <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">
-            search
-          </span>
-          <input 
-            type="text" 
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Cari..."
-            className="w-full bg-slate-50 border border-slate-100 rounded-full py-2.5 pl-11 pr-4 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all shadow-inner"
-          />
-        </div>
-      </div>
-
       {/* KANAN: Avatar & Dropdown */}
-      <div className="flex items-center border-l border-slate-100 pl-4" ref={dropdownRef}>
+      <div className="flex-1 flex justify-end items-center border-slate-100 pl-4" ref={dropdownRef}>
         <div className="relative">
           <button 
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="w-10 h-10 rounded-full flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all shadow-md overflow-hidden bg-indigo-600 text-white font-bold text-lg uppercase"
           >
-            {userName?.charAt(0) || 'U'}
+            {userAvatar ? (
+              <img src={userAvatar} alt={userName} className="w-full h-full object-cover" />
+            ) : (
+              userName?.charAt(0) || 'U'
+            )}
           </button>
 
           {isDropdownOpen && (
@@ -82,8 +73,12 @@ export default function Navbar({
               
               {/* Info Akun */}
               <div className="flex items-center gap-3 pb-3 border-b border-slate-100 mb-3">
-                <div className="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-lg uppercase">
-                  {userName?.charAt(0) || 'U'}
+                <div className="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-lg uppercase overflow-hidden">
+                  {userAvatar ? (
+                    <img src={userAvatar} alt={userName} className="w-full h-full object-cover" />
+                  ) : (
+                    userName?.charAt(0) || 'U'
+                  )}
                 </div>
                 <div className="overflow-hidden">
                   <h4 className="font-bold text-slate-900 text-sm leading-tight truncate">{userName || 'User Name'}</h4>

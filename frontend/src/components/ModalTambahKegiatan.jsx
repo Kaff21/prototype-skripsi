@@ -1,3 +1,4 @@
+import API_BASE_URL from "@/utils/api";
 "use client";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -61,16 +62,16 @@ export default function ModalTambahKegiatan({ isOpen, onClose, onSuccess, editDa
       let kegiatanId = editData?.id;
 
       if (editData) {
-        await axios.put(`http://localhost:5000/api/kegiatan/update/${kegiatanId}`, formData);
+        await axios.put(`${API_BASE_URL}/api/kegiatan/update/${kegiatanId}`, formData);
       } else {
-        const res = await axios.post("http://localhost:5000/api/kegiatan/tambah", formData);
+        const res = await axios.post(API_BASE_URL + "/api/kegiatan/tambah", formData);
         kegiatanId = res.data.data.id; 
       }
 
       if (proposalFile && kegiatanId) {
         const proposalData = new FormData();
         proposalData.append("proposal", proposalFile);
-        await axios.post(`http://localhost:5000/api/kegiatan/${kegiatanId}/upload-proposal`, proposalData);
+        await axios.post(`${API_BASE_URL}/api/kegiatan/${kegiatanId}/upload-proposal`, proposalData);
       }
 
       alert(editData ? "Kegiatan berhasil diupdate!" : "Kegiatan dan Proposal berhasil ditambahkan & sedang menunggu persetujuan!");

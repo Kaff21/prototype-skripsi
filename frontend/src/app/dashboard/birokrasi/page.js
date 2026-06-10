@@ -17,7 +17,7 @@ export default function BirokrasiKegiatanPage() {
       const roleStr = (storedUser.role || "").toLowerCase().trim();
       const orgId = storedUser.organization_id || "null";
       
-      let url = `http://localhost:5000/api/kegiatan?role=${roleStr}&org_id=${orgId}`;
+      let url = `${API_BASE_URL}/api/kegiatan?role=${roleStr}&org_id=${orgId}`;
       
       const res = await axios.get(url);
       setKegiatan(res.data || []);
@@ -61,7 +61,7 @@ export default function BirokrasiKegiatanPage() {
     }
 
     try {
-      await axios.patch(`http://localhost:5000/api/kegiatan/${id}/persetujuan`, {
+      await axios.patch(`${API_BASE_URL}/api/kegiatan/${id}/persetujuan`, {
         roleApprover,
         status,
         catatan_revisi: catatan

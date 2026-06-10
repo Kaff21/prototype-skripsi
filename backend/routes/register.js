@@ -11,7 +11,7 @@ router.post('/', async (req, res) => {
 
   try {
     // 1. SignUp ke Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.signUp({
+    const { data: authData, error: authError } = await supabase.authClient.auth.signUp({
       email,
       password,
     });

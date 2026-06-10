@@ -18,7 +18,7 @@ export default function ProfileView({ userProfile, isOwnProfile, onProfileUpdate
     const fetchContributions = async () => {
       if (!userProfile?.id) return;
       try {
-        const res = await axios.get(`http://localhost:5000/api/users/contributions/${userProfile.id}`);
+        const res = await axios.get(`${API_BASE_URL}/api/users/contributions/${userProfile.id}`);
         setContributions(res.data);
       } catch (err) {
         console.error("Gagal memuat kontribusi:", err);
@@ -30,7 +30,7 @@ export default function ProfileView({ userProfile, isOwnProfile, onProfileUpdate
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await axios.put(`http://localhost:5000/api/users/${userProfile.id}`, {
+      await axios.put(`${API_BASE_URL}/api/users/${userProfile.id}`, {
         bio: editData.bio
       });
 
@@ -57,7 +57,7 @@ export default function ProfileView({ userProfile, isOwnProfile, onProfileUpdate
     formData.append("avatar", file);
 
     try {
-      await axios.put(`http://localhost:5000/api/users/${userProfile.id}/upload-avatar`, formData, {
+      await axios.put(`${API_BASE_URL}/api/users/${userProfile.id}/upload-avatar`, formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
       alert("Foto profil berhasil diubah!");

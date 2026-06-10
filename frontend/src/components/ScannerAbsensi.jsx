@@ -1,3 +1,4 @@
+import API_BASE_URL from "@/utils/api";
 "use client";
 import { useEffect, useState } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
@@ -28,7 +29,7 @@ export default function ScannerAbsensi() {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       const activityId = qrData.replace("ABSENSI_", "");
 
-      await axios.post("http://localhost:5000/api/kegiatan/absen", {
+      await axios.post(API_BASE_URL + "/api/kegiatan/absen", {
         activity_id: activityId,
         user_id: user.id
       });

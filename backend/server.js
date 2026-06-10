@@ -1,19 +1,33 @@
 require('dotenv').config(); 
 const express = require('express');
 const cors = require('cors');
-// Hapus createClient di sini jika sudah ada di config/supabase.js
 
 const registerRoutes = require('./routes/register');
 const loginRoutes = require('./routes/login');
 const statsRoutes = require('./routes/stats'); 
 const userRoute = require('./routes/users');
-const kegiatanRoutes = require("./routes/kegiatan"); // Pastikan file-nya ada!
+const kegiatanRoutes = require("./routes/kegiatan");
 const organizationRoutes = require('./routes/organization');
 
 const app = express(); 
 
-// Middleware Global
-app.use(cors());
+// CORS: izinkan Vercel (production) dan localhost (development)
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowed = [
+      /\.vercel\.app$/,
+      /^http:\/\/localhost/,
+      /^http:\/\/127\.0\.0\.1/
+    ];
+    if (!origin || allowed.some(pattern => pattern.test(origin))) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS tidak diizinkan: ' + origin));
+    }
+  },
+  credentials: true
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Anti-Cache (Sudah benar kamu pasang ini)

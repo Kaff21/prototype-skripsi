@@ -1,3 +1,4 @@
+import API_BASE_URL from "@/utils/api";
 "use client";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -35,8 +36,8 @@ export default function DashboardUKM() {
         // 🚨 JIKA BIROKRASI: Tarik data global
         if (isBirokrasi) {
           const [resOrg, resKegiatan] = await Promise.all([
-             axios.get("http://localhost:5000/api/organizations"),
-             axios.get("http://localhost:5000/api/kegiatan")
+             axios.get(API_BASE_URL + "/api/organizations"),
+             axios.get(API_BASE_URL + "/api/kegiatan")
           ]);
           
           const pending = resKegiatan.data.filter(k => !k.is_published).length;
@@ -46,7 +47,7 @@ export default function DashboardUKM() {
         } 
         // 🚨 JIKA UKM: Tarik data spesifik organisasi
         else if (storedUser && storedUser.organization_id) {
-          const res = await axios.get(`http://localhost:5000/api/organizations/${storedUser.organization_id}`);
+          const res = await axios.get(`${API_BASE_URL}/api/organizations/${storedUser.organization_id}`);
           setUkmDetail(res.data);
           const currentTheme = res.data?.color_theme || res.data?.org_theme;
           if (currentTheme) setTheme(getTheme(currentTheme));

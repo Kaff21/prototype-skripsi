@@ -1,3 +1,4 @@
+import API_BASE_URL from "@/utils/api";
 "use client";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -60,14 +61,14 @@ export default function DashboardUtama() {
         let url = null;
 
         if (["superadmin", "bem", "kemahasiswaan"].includes(role)) {
-          url = "http://localhost:5000/api/stats/superadmin";
+          url = API_BASE_URL + "/api/stats/superadmin";
         } else if (["admin_ukm", "admin", "pembina"].includes(role)) {
           if (orgId && orgId !== "null" && orgId !== "undefined") {
-            url = `http://localhost:5000/api/stats/admin/${orgId}`;
+            url = `${API_BASE_URL}/api/stats/admin/${orgId}`;
           }
         } else {
           if (orgId && orgId !== "null" && orgId !== "undefined") {
-            url = `http://localhost:5000/api/organizations/${orgId}`;
+            url = `${API_BASE_URL}/api/organizations/${orgId}`;
           }
         }
 

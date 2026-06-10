@@ -43,7 +43,7 @@ export default function PengaturanUKM({ data, onRefresh }) {
     setUploading(true);
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/organizations/${form.id}/upload-logo`,
+        `${API_BASE_URL}/api/organizations/${form.id}/upload-logo`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -65,7 +65,7 @@ export default function PengaturanUKM({ data, onRefresh }) {
     setSaving(true);
     try {
       // 1. Simpan ke Database (Supabase)
-      await axios.put(`http://localhost:5000/api/organizations/${form.id}`, form);
+      await axios.put(`${API_BASE_URL}/api/organizations/${form.id}`, form);
 
       // 2. Update LocalStorage agar Sidebar dan komponen lain tahu warna baru
       const currentUser = JSON.parse(localStorage.getItem("user"));

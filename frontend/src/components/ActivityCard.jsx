@@ -25,7 +25,7 @@ export default function ActivityCard({ id, judul, deskripsi, orgName, tanggal, l
   const handleStatusChange = async (e) => {
     const newStatus = e.target.value;
     try {
-      await axios.patch(`http://localhost:5000/api/kegiatan/${id}/status-pelaksanaan`, { status: newStatus });
+      await axios.patch(`${API_BASE_URL}/api/kegiatan/${id}/status-pelaksanaan`, { status: newStatus });
       if (onRefresh) onRefresh(); 
     } catch (error) {
       alert("Gagal merubah status kegiatan.");
@@ -35,7 +35,7 @@ export default function ActivityCard({ id, judul, deskripsi, orgName, tanggal, l
   const handleDelete = async () => {
     if (window.confirm(`Apakah Anda yakin ingin menghapus kegiatan "${judul}"?`)) {
       try {
-        await axios.delete(`http://localhost:5000/api/kegiatan/${id}`);
+        await axios.delete(`${API_BASE_URL}/api/kegiatan/${id}`);
         alert("Kegiatan berhasil dihapus!");
         if (onRefresh) onRefresh(); 
       } catch (error) {

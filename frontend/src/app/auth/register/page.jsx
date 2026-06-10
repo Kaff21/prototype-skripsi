@@ -1,3 +1,4 @@
+import API_BASE_URL from "@/utils/api";
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -20,7 +21,7 @@ export default function RegisterPage() {
   useEffect(() => {
     const fetchOrgs = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/organizations");
+        const res = await axios.get(API_BASE_URL + "/api/organizations");
         setOrganizations(res.data);
       } catch (err) {
         console.error("Gagal mengambil data organisasi");
@@ -37,7 +38,7 @@ export default function RegisterPage() {
     console.log("Data siap kirim:", formData);
 
     try {
-      await axios.post("http://localhost:5000/api/register", formData);
+      await axios.post(API_BASE_URL + "/api/register", formData);
       alert("Pendaftaran berhasil! Silakan login.");
       router.push("/auth/login");
     } catch (err) {

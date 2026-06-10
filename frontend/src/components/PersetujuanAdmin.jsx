@@ -16,7 +16,7 @@ export default function PersetujuanAdmin() {
       // TAMBAHKAN ?t=${new Date().getTime()} DI SINI
       // Ini akan membuat URL selalu unik setiap milidetik, mencegah sistem menyimpan cache
       const timestamp = new Date().getTime();
-      const response = await axios.get(`http://localhost:5000/api/users/pending?t=${timestamp}`);
+      const response = await axios.get(`${API_BASE_URL}/api/users/pending?t=${timestamp}`);
       
       let data = response.data;
 
@@ -56,14 +56,22 @@ export default function PersetujuanAdmin() {
 
     try {
       // Murni memanggil Backend (Node.js)
-      await axios.patch(`http://localhost:5000/api/users/${id}/status`, { status: aksiStatus });
+      await axios.patch(`${API_BASE_URL}/api/users/${id}/status`, { status: aksiStatus });
       alert(`Pendaftar berhasil ${aksiStatus === 'aktif' ? 'diterima' : 'ditolak'}.`);
       
       // Hapus data dari layar secara instan
       setPendingUsers(prev => prev.filter(user => user.id !== id));
     } catch (error) {
       console.error("Gagal memproses:", error);
-      alert("Terjadi kesalahan saat memproses data.");
+      const serverMsg = error.response?.data?.error || "Terjadi kesalahan";
+      const debugId = error.response?.data?.debug_id_diterima;
+      const debugStatus = error.response?.data?.debug_status_diterima;
+      
+      if (debugId) {
+         alert(`${serverMsg}\nID: ${debugId}\nStatus: ${debugStatus}`);
+      } else {
+         alert(`Gagal diproses: ${serverMsg}`);
+      }
     }
   };
 

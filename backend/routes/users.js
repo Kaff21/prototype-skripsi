@@ -12,7 +12,8 @@ router.get('/pending', async (req, res) => {
   res.header("Pragma", "no-cache");
   res.header("Expires", 0);
   try {
-    const { data, error } = await supabase.from('profiles').select('*').eq('status', 'pending').order('updated_at', { ascending: false });
+    // Menghapus order('updated_at') untuk mencegah error 500 jika kolom tersebut tidak ada
+    const { data, error } = await supabase.from('profiles').select('*').eq('status', 'pending');
     if (error) throw error;
     res.json(data);
   } catch (error) { res.status(500).json({ error: error.message }); }
@@ -56,6 +57,19 @@ router.get('/', async (req, res) => {
   } catch (error) { res.status(500).json({ error: error.message }); }
 });
 
+// Ambil semua user yang statusnya 'aktif'
+router.get('/aktif', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*, organizations(name, initial)')
+      .eq('status', 'aktif');
+      
+    if (error) throw error;
+    res.json(data);
+  } catch (error) { res.status(500).json({ error: error.message }); }
+});
+
 // Ambil SATU data user
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
@@ -73,10 +87,28 @@ router.patch('/:id/status', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
   try {
-    const { error } = await supabase.from('profiles').update({ status: status }).eq('id', id);
+    // Tambahkan .select() untuk memastikan baris benar-benar terupdate
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({ status: status })
+      .eq('id', id)
+      .select();
+
     if (error) throw error;
+    
+    // Jika data kosong, berarti ID tidak ditemukan atau terblokir RLS
+    if (!data || data.length === 0) {
+      return res.status(400).json({ 
+        error: "Gagal memperbarui. Data tidak ditemukan atau akses ditolak.",
+        debug_id_diterima: id,
+        debug_status_diterima: status
+      });
+    }
+
     res.json({ message: `User berhasil diperbarui menjadi ${status}` });
-  } catch (error) { res.status(500).json({ error: error.message }); }
+  } catch (error) { 
+    res.status(500).json({ error: error.message }); 
+  }
 });
 
 // 🚨 E. PERBAIKAN: Edit Data User & Update Bio beserta Keterikatan Organisasi

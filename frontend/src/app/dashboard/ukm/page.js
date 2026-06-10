@@ -1,3 +1,4 @@
+import API_BASE_URL from "@/utils/api";
 "use client";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -11,7 +12,7 @@ export default function ManajemenUKM() {
   const fetchUKM = async () => {
     try {
       // Pastikan port sesuai dengan yang sedang nyala (misal: 5000 atau 5001)
-      const res = await axios.get("http://localhost:5000/api/organizations");
+      const res = await axios.get(API_BASE_URL + "/api/organizations");
       setDaftarUKM(res.data);
     } catch (err) {
       console.error("Gagal load UKM", err);
@@ -25,7 +26,7 @@ export default function ManajemenUKM() {
   const handleAddUKM = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/organizations", newUKM);
+      await axios.post(API_BASE_URL + "/api/organizations", newUKM);
       setShowModal(false);
       fetchUKM(); 
     } catch (err) { alert("Gagal menambah UKM"); }
@@ -34,7 +35,7 @@ export default function ManajemenUKM() {
   const handleDelete = async (id) => {
     if (confirm("Hapus UKM ini? Anggota di dalamnya mungkin akan kehilangan akses.")) {
       try {
-        await axios.delete(`http://localhost:5000/api/organizations/${id}`);
+        await axios.delete(`${API_BASE_URL}/api/organizations/${id}`);
         fetchUKM();
       } catch (err) { alert("Gagal menghapus UKM"); }
     }

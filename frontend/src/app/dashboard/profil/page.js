@@ -22,7 +22,7 @@ export default function ProfilPage() {
     
     try {
       // Ambil data user terbaru dari database
-      const res = await axios.get(`http://localhost:5000/api/users/${userData.id}`);
+      const res = await axios.get(`${API_BASE_URL}/api/users/${userData.id}`);
       const updatedUser = res.data;
 
       // Update state di layar

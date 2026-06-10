@@ -8,7 +8,7 @@ router.post("/", async(req, res) => {
 
     try {
         const { data: authData, error: authError } =
-        await supabase.auth.signInWithPassword({
+        await supabase.authClient.auth.signInWithPassword({
             email,
             password,
         });

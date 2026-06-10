@@ -94,6 +94,7 @@ export default function DashboardLayout({ children }) {
           activeMenu={activeMenuPath}
           userName={user.full_name}
           userOrg={user.role}
+          userAvatar={user.avatar_url}
         />
 
         <main className="flex-1 p-6 overflow-x-hidden">

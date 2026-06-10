@@ -1,3 +1,4 @@
+import API_BASE_URL from "@/utils/api";
 "use client";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -15,7 +16,7 @@ export default function ManajemenAkun() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/users");
+      const res = await axios.get(API_BASE_URL + "/api/users");
       setUsers(res.data);
     } catch (err) {
       console.error("Gagal mengambil data user:", err);
@@ -26,7 +27,7 @@ export default function ManajemenAkun() {
 
   const fetchOrganizations = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/organizations");
+      const res = await axios.get(API_BASE_URL + "/api/organizations");
       setOrganizations(res.data || []);
     } catch (err) {
       console.error("Gagal mengambil data organisasi:", err);
@@ -60,7 +61,7 @@ export default function ManajemenAkun() {
     e.preventDefault();
     setIsSaving(true);
     try {
-      await axios.put(`http://localhost:5000/api/users/${editData.id}`, {
+      await axios.put(`${API_BASE_URL}/api/users/${editData.id}`, {
         full_name: editData.full_name,
         nim: editData.nim,
         email: editData.email,
@@ -84,7 +85,7 @@ export default function ManajemenAkun() {
     if (!konfirmasi) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/users/${id}`);
+      await axios.delete(`${API_BASE_URL}/api/users/${id}`);
       alert(`Akun ${nama} berhasil dihapus dari sistem!`);
       fetchUsers(); 
     } catch (error) {

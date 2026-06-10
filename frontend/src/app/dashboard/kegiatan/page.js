@@ -20,7 +20,7 @@ export default function KegiatanPage() {
       setUserRole((storedUser.role || "").toLowerCase().trim());
 
       // 🚨 PERBAIKAN: Kirim role agar backend tahu siapa yang request
-      const res = await axios.get(`http://localhost:5000/api/kegiatan?org_id=${storedUser.organization_id}&role=${storedUser.role}`);
+      const res = await axios.get(`${API_BASE_URL}/api/kegiatan?org_id=${storedUser.organization_id}&role=${storedUser.role}`);
       setActivities(res.data || []);
     } catch (error) {
       console.error("Error fetching:", error.message);
@@ -46,20 +46,21 @@ export default function KegiatanPage() {
   };
 
   return (
-    <div className="space-y-8 p-8">
+    <div className="space-y-6 md:space-y-8 p-4 sm:p-6 md:p-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-slate-800 tracking-tight">Manajemen Kegiatan</h1>
           <p className="text-slate-400 text-sm font-medium">Kelola agenda dan absensi QR anggota</p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="flex bg-slate-100 p-1 rounded-2xl border border-slate-200">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full md:w-auto">
+          {/* Tambahkan overflow-x-auto dan hilangkan scrollbar agar bisa digeser di HP */}
+          <div className="flex bg-slate-100 p-1 rounded-2xl border border-slate-200 overflow-x-auto hide-scrollbar w-full sm:w-auto">
             {["Semua", "Akan Datang", "Berjalan", "Selesai"].map((status) => (
               <button
                 key={status}
                 onClick={() => setFilterStatus(status)}
-                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${
+                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${
                   filterStatus === status 
                   ? "bg-white text-indigo-600 shadow-sm" 
                   : "text-slate-400 hover:text-slate-600"
