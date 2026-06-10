@@ -1,4 +1,5 @@
 "use client";
+import API_BASE_URL from "@/utils/api";
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import PengaturanUKM from "@/components/PengaturanUKM";

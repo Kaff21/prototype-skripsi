@@ -1,4 +1,5 @@
 "use client";
+import API_BASE_URL from "@/utils/api";
 import { QRCodeCanvas } from 'qrcode.react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';

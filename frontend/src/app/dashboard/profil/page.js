@@ -1,4 +1,5 @@
 "use client";
+import API_BASE_URL from "@/utils/api";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ProfileView from "@/components/ProfileView";
