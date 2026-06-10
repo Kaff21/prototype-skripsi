@@ -47,29 +47,29 @@ export default function KegiatanPage() {
   };
 
   return (
-    <div className="space-y-6 md:space-y-8 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-slate-100">
+    <div className="space-y-6 md:space-y-8 p-4 sm:p-6 md:p-8">
+      {/* Header Section (Menyatu dengan background, tidak pakai kotak putih besar) */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shadow-inner">
+            <div className="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center shadow-inner">
               <span className="material-symbols-outlined">event_note</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">Manajemen Kegiatan</h1>
           </div>
-          <p className="text-slate-500 text-sm font-medium ml-13 md:ml-0">Kelola seluruh agenda, proposal, dan absensi QR anggota.</p>
+          <p className="text-slate-500 text-sm font-medium ml-[52px] md:ml-0">Kelola seluruh agenda, proposal, dan absensi QR anggota.</p>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4 w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 w-full md:w-auto max-w-full overflow-hidden">
           {/* Tabs Navigation */}
-          <div className="flex bg-slate-50 p-1.5 rounded-2xl border border-slate-200 overflow-x-auto hide-scrollbar w-full sm:w-auto shadow-inner">
+          <div className="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 overflow-x-auto hide-scrollbar w-full sm:w-auto">
             {["Semua", "Akan Datang", "Berjalan", "Selesai"].map((status) => (
               <button
                 key={status}
                 onClick={() => setFilterStatus(status)}
-                className={`px-5 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-300 whitespace-nowrap flex-1 sm:flex-none ${
+                className={`px-5 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-300 whitespace-nowrap ${
                   filterStatus === status 
-                  ? "bg-white text-indigo-600 shadow-md ring-1 ring-black/5" 
+                  ? "bg-white text-indigo-600 shadow-sm" 
                   : "text-slate-400 hover:text-slate-700 hover:bg-slate-200/50"
                 }`}
               >
@@ -82,7 +82,7 @@ export default function KegiatanPage() {
           {isAdmin && (
             <button 
               onClick={() => { setSelectedEdit(null); setIsModalOpen(true); }}
-              className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl shadow-indigo-200 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 w-full sm:w-auto"
+              className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl shadow-indigo-200 transition-all duration-300 active:scale-95 w-full sm:w-auto shrink-0"
             >
               <span className="material-symbols-outlined text-[20px]">add_circle</span>
               Buat Kegiatan
