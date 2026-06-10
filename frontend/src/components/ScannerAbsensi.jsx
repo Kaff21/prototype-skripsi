@@ -1,5 +1,5 @@
-import API_BASE_URL from "@/utils/api";
 "use client";
+import API_BASE_URL from "@/utils/api";
 import { useEffect, useState } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import axios from "axios";
