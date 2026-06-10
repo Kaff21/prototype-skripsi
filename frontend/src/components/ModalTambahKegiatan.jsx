@@ -2,6 +2,7 @@
 import API_BASE_URL from "@/utils/api";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import AlertDialog, { useAlert } from "@/components/Alert";
 
 export default function ModalTambahKegiatan({ isOpen, onClose, onSuccess, editData }) {
   const [form, setForm] = useState({
@@ -11,12 +12,13 @@ export default function ModalTambahKegiatan({ isOpen, onClose, onSuccess, editDa
     waktu: "",
     lokasi: "",
     anggaran: "",
-    status: "Akan Datang" // Default status
+    status: "Akan Datang"
   });
   
   const [imageFile, setImageFile] = useState(null);
   const [proposalFile, setProposalFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { alertState, showAlert, handleClose } = useAlert();
 
   useEffect(() => {
     if (editData) {
@@ -74,12 +76,18 @@ export default function ModalTambahKegiatan({ isOpen, onClose, onSuccess, editDa
         await axios.post(`${API_BASE_URL}/api/kegiatan/${kegiatanId}/upload-proposal`, proposalData);
       }
 
-      alert(editData ? "Kegiatan berhasil diupdate!" : "Kegiatan dan Proposal berhasil ditambahkan & sedang menunggu persetujuan!");
+      await showAlert({
+        type: "success",
+        title: editData ? "Kegiatan Diperbarui! ✅" : "Kegiatan Diajukan! 🎉",
+        message: editData
+          ? "Data kegiatan berhasil diupdate."
+          : "Kegiatan dan Proposal berhasil dikirim & sedang menunggu persetujuan!",
+      });
       onSuccess();
       onClose();
     } catch (error) {
       console.error("Error:", error);
-      alert("Terjadi kesalahan saat menyimpan kegiatan atau proposal.");
+      await showAlert({ type: "error", title: "Terjadi Kesalahan!", message: "Gagal menyimpan kegiatan atau proposal. Coba lagi." });
     } finally {
       setLoading(false);
     }
@@ -175,5 +183,8 @@ export default function ModalTambahKegiatan({ isOpen, onClose, onSuccess, editDa
         </form>
       </div>
     </div>
+
+    {/* Custom Alert Dialog */}
+    <AlertDialog alertState={alertState} onClose={handleClose} />
   );
 }

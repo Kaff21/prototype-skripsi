@@ -3,10 +3,12 @@ import API_BASE_URL from "@/utils/api";
 import { QRCodeCanvas } from 'qrcode.react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { getTheme } from '@/utils/theme'; 
+import { getTheme } from '@/utils/theme';
+import AlertDialog, { useAlert } from '@/components/Alert';
 
 export default function ActivityCard({ id, judul, deskripsi, orgName, tanggal, lokasi, status, image, isPublished, onRefresh, onEdit, isAdmin }) {
-  const [theme, setTheme] = useState(getTheme("bg-indigo-600")); 
+  const [theme, setTheme] = useState(getTheme("bg-indigo-600"));
+  const { alertState, showAlert, handleClose } = useAlert();
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -27,28 +29,33 @@ export default function ActivityCard({ id, judul, deskripsi, orgName, tanggal, l
     const newStatus = e.target.value;
     try {
       await axios.patch(`${API_BASE_URL}/api/kegiatan/${id}/status-pelaksanaan`, { status: newStatus });
-      if (onRefresh) onRefresh(); 
+      if (onRefresh) onRefresh();
     } catch (error) {
-      alert("Gagal merubah status kegiatan.");
+      await showAlert({ type: "error", title: "Gagal!", message: "Gagal merubah status kegiatan. Coba lagi." });
     }
   };
 
   const handleDelete = async () => {
-    if (window.confirm(`Apakah Anda yakin ingin menghapus kegiatan "${judul}"?`)) {
+    const confirmed = await showAlert({
+      type: "confirm",
+      title: "Hapus Kegiatan?",
+      message: `Kegiatan "${judul}" akan dihapus permanen dan tidak bisa dikembalikan.`,
+    });
+    if (confirmed) {
       try {
         await axios.delete(`${API_BASE_URL}/api/kegiatan/${id}`);
-        alert("Kegiatan berhasil dihapus!");
-        if (onRefresh) onRefresh(); 
+        await showAlert({ type: "success", title: "Berhasil Dihapus!", message: `Kegiatan "${judul}" telah dihapus.` });
+        if (onRefresh) onRefresh();
       } catch (error) {
-        alert("Gagal menghapus kegiatan.");
+        await showAlert({ type: "error", title: "Gagal!", message: "Gagal menghapus kegiatan. Coba lagi." });
       }
     }
   };
 
-  const handleDownloadQR = () => {
+  const handleDownloadQR = async () => {
     const canvas = document.getElementById(`qr-canvas-${id}`);
     if (!canvas) {
-      alert("Sistem sedang menyiapkan QR, coba klik sekali lagi.");
+      await showAlert({ type: "warning", title: "QR Belum Siap", message: "Sistem sedang menyiapkan QR, coba klik sekali lagi." });
       return;
     }
     const pngUrl = canvas.toDataURL("image/png");
@@ -129,5 +136,8 @@ export default function ActivityCard({ id, judul, deskripsi, orgName, tanggal, l
         </button>
       </div>
     </div>
+
+    {/* Custom Alert Dialog */}
+    <AlertDialog alertState={alertState} onClose={handleClose} />
   );
 }
