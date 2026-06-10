@@ -79,14 +79,14 @@ export default function DashboardLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-slate-50 flex overflow-x-hidden w-full">
       <Sidebar 
         isOpen={isSidebarOpen} 
         onClose={() => setIsSidebarOpen(false)} 
         userData={user} 
       />
 
-      <div className="flex-1 md:ml-64 flex flex-col transition-all duration-300">
+      <div className="flex-1 min-w-0 md:ml-64 flex flex-col transition-all duration-300 overflow-x-hidden">
         <Navbar 
           onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
           onLogout={handleLogout}
@@ -97,7 +97,7 @@ export default function DashboardLayout({ children }) {
           userAvatar={user.avatar_url}
         />
 
-        <main className="flex-1 p-6 overflow-x-hidden">
+        <main className="flex-1 overflow-x-hidden">
           {children}
         </main>
       </div>
