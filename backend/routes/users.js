@@ -153,10 +153,25 @@ router.put('/:id/upload-avatar', upload.single('avatar'), async (req, res) => {
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const { error } = await supabase.from('profiles').delete().eq('id', id);
-    if (error) throw error;
-    res.json({ status: "sukses", message: "Akun berhasil dihapus permanen" });
-  } catch (error) { res.status(500).json({ status: "error", message: error.message }); }
+    // 1. Hapus data absensi terkait user ini terlebih dahulu agar tidak terkena Foreign Key constraint error
+    const { error: attendanceError } = await supabase.from('attendance').delete().eq('user_id', id);
+    if (attendanceError) {
+      console.error("Gagal menghapus data absensi:", attendanceError.message);
+    }
+
+    // 2. Hapus data profil di tabel 'profiles'
+    const { error: profileError } = await supabase.from('profiles').delete().eq('id', id);
+    if (profileError) throw profileError;
+
+    // 3. Hapus data autentikasi di Supabase Auth (memerlukan Service Role Key)
+    const { error: authError } = await supabase.auth.admin.deleteUser(id);
+    if (authError) throw authError;
+
+    res.json({ status: "sukses", message: "Akun dan autentikasi berhasil dihapus permanen" });
+  } catch (error) { 
+    console.error("Gagal menghapus akun:", error.message);
+    res.status(500).json({ status: "error", message: error.message }); 
+  }
 });
 
 module.exports = router;
