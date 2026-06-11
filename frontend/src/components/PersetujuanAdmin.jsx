@@ -2,30 +2,23 @@
 import API_BASE_URL from "@/utils/api";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import AlertDialog, { useAlert } from "@/components/Alert";
 
 export default function PersetujuanAdmin() {
   const [pendingUsers, setPendingUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
+  const { alertState, showAlert, handleClose } = useAlert();
 
-  // Fungsi fetch ditambahkan parameter 'isBackground' agar saat auto-refresh 
-  // tulisan "Memuat data..." tidak berkedip-kedip mengganggu user
   const fetchPendingUsers = async (user, isBackground = false) => {
     try {
-      if (!isBackground) setLoading(true); 
-      
-      // TAMBAHKAN ?t=${new Date().getTime()} DI SINI
-      // Ini akan membuat URL selalu unik setiap milidetik, mencegah sistem menyimpan cache
+      if (!isBackground) setLoading(true);
       const timestamp = new Date().getTime();
       const response = await axios.get(`${API_BASE_URL}/api/users/pending?t=${timestamp}`);
-      
       let data = response.data;
-
-      // Filter Role Admin UKM
       if (user?.role === "admin_ukm") {
         data = data.filter(pendaftar => pendaftar.organization_id === user.organization_id);
       }
-
       setPendingUsers(data);
     } catch (error) {
       console.error("Gagal mengambil data pendaftar:", error);
@@ -37,42 +30,39 @@ export default function PersetujuanAdmin() {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     setCurrentUser(user);
-    
-    // 1. Tarikan data pertama kali saat halaman dibuka
     fetchPendingUsers(user, false);
-
-    // 2. TEKNIK POLLING: Sinkronisasi Real-time via Backend
-    // Meminta data terbaru dari backend setiap 5 detik (5000 ms)
     const intervalId = setInterval(() => {
       fetchPendingUsers(user, true);
     }, 5000);
-
-    // 3. Bersihkan memori interval saat komponen ditutup/pindah halaman
     return () => clearInterval(intervalId);
   }, []);
 
   const handleAction = async (id, nama, aksiStatus) => {
-    const konfirmasi = confirm(`Yakin ingin ${aksiStatus === 'aktif' ? 'MENERIMA' : 'MENOLAK'} pendaftar atas nama ${nama}?`);
-    if (!konfirmasi) return;
+    const confirmed = await showAlert({
+      type: "confirm",
+      title: aksiStatus === 'aktif' ? `Terima Pendaftar?` : `Tolak Pendaftar?`,
+      message: `${aksiStatus === 'aktif' ? 'Terima' : 'Tolak'} pendaftaran atas nama "${nama}"?`,
+    });
+    if (!confirmed) return;
 
     try {
-      // Murni memanggil Backend (Node.js)
       await axios.patch(`${API_BASE_URL}/api/users/${id}/status`, { status: aksiStatus });
-      alert(`Pendaftar berhasil ${aksiStatus === 'aktif' ? 'diterima' : 'ditolak'}.`);
-      
-      // Hapus data dari layar secara instan
+      await showAlert({
+        type: "success",
+        title: aksiStatus === 'aktif' ? "Pendaftar Diterima!" : "Pendaftar Ditolak!",
+        message: `${nama} berhasil ${aksiStatus === 'aktif' ? 'diterima' : 'ditolak'}.`,
+      });
       setPendingUsers(prev => prev.filter(user => user.id !== id));
     } catch (error) {
       console.error("Gagal memproses:", error);
       const serverMsg = error.response?.data?.error || "Terjadi kesalahan";
       const debugId = error.response?.data?.debug_id_diterima;
       const debugStatus = error.response?.data?.debug_status_diterima;
-      
-      if (debugId) {
-         alert(`${serverMsg}\nID: ${debugId}\nStatus: ${debugStatus}`);
-      } else {
-         alert(`Gagal diproses: ${serverMsg}`);
-      }
+      await showAlert({
+        type: "error",
+        title: "Gagal Diproses!",
+        message: debugId ? `${serverMsg} (ID: ${debugId}, Status: ${debugStatus})` : `Gagal diproses: ${serverMsg}`,
+      });
     }
   };
 
@@ -82,8 +72,8 @@ export default function PersetujuanAdmin() {
         <div>
           <h3 className="font-black text-2xl text-slate-800 tracking-tight">Persetujuan Mahasiswa Baru</h3>
           <p className="text-slate-500 text-sm mt-1">
-            {currentUser?.role === "superadmin" 
-              ? "Pantau semua pendaftar organisasi mahasiswa di kampus." 
+            {currentUser?.role === "superadmin"
+              ? "Pantau semua pendaftar organisasi mahasiswa di kampus."
               : "Verifikasi pendaftar baru untuk UKM Anda."}
           </p>
         </div>
@@ -112,7 +102,7 @@ export default function PersetujuanAdmin() {
         <div className="space-y-4">
           {pendingUsers.map((user) => (
             <div key={user.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 bg-slate-50 hover:bg-indigo-50/50 transition-colors rounded-3xl gap-4 border border-slate-100 animate-in fade-in slide-in-from-top-4 duration-500">
-              
+
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-black text-lg shadow-inner">
                   {user.full_name?.charAt(0).toUpperCase()}
@@ -126,14 +116,14 @@ export default function PersetujuanAdmin() {
               </div>
 
               <div className="flex gap-2 w-full sm:w-auto">
-                <button 
+                <button
                   onClick={() => handleAction(user.id, user.full_name, 'aktif')}
                   className="flex-1 sm:flex-none px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-black rounded-xl uppercase tracking-widest transition-all shadow-lg shadow-emerald-200"
                 >
                   Terima
                 </button>
-                
-                <button 
+
+                <button
                   onClick={() => handleAction(user.id, user.full_name, 'ditolak')}
                   className="flex-1 sm:flex-none px-6 py-3 bg-white border border-red-100 text-red-500 hover:bg-red-50 text-[11px] font-black rounded-xl uppercase tracking-widest transition-all"
                 >
@@ -145,6 +135,8 @@ export default function PersetujuanAdmin() {
           ))}
         </div>
       )}
+
+      <AlertDialog alertState={alertState} onClose={handleClose} />
     </div>
   );
 }

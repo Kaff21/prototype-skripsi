@@ -86,7 +86,7 @@ export default function DashboardLayout({ children }) {
         userData={user} 
       />
 
-      <div className="flex-1 min-w-0 md:ml-64 flex flex-col transition-all duration-300 overflow-x-hidden">
+      <div className="flex-1 min-w-0 md:ml-64 flex flex-col h-screen transition-all duration-300 overflow-x-hidden">
         <Navbar 
           onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
           onLogout={handleLogout}
@@ -97,7 +97,7 @@ export default function DashboardLayout({ children }) {
           userAvatar={user.avatar_url}
         />
 
-        <main className="flex-1 overflow-x-hidden">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden">
           {children}
         </main>
       </div>
