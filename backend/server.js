@@ -11,12 +11,14 @@ const organizationRoutes = require('./routes/organization');
 
 const app = express(); 
 
-// CORS: izinkan Vercel (production) dan localhost (development)
+// CORS: izinkan Vercel (production), localhost (development), dan Capacitor (mobile app)
 const corsOptions = {
   origin: function (origin, callback) {
     const allowed = [
       /\.vercel\.app$/,
       /^http:\/\/localhost/,
+      /^https:\/\/localhost/,
+      /^capacitor:\/\/localhost/,
       /^http:\/\/127\.0\.0\.1/
     ];
     if (!origin || allowed.some(pattern => pattern.test(origin))) {
