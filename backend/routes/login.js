@@ -94,4 +94,69 @@ router.post("/", async(req, res) => {
     }
 });
 
+// Rute untuk meminta link reset password
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: "Email wajib diisi." });
+  }
+
+  try {
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+    const redirectToUrl = `${frontendUrl}/auth/reset-password`;
+
+    const { error } = await supabase.authClient.auth.resetPasswordForEmail(email, {
+      redirectTo: redirectToUrl,
+    });
+
+    if (error) {
+      console.error("Supabase Reset Error:", error.message);
+      return res.status(400).json({ error: error.message });
+    }
+
+    res.json({ message: "Link reset password berhasil dikirim ke email Anda." });
+  } catch (error) {
+    console.error("Forgot password server error:", error);
+    res.status(500).json({ error: "Terjadi kesalahan pada server." });
+  }
+});
+
+// Rute untuk merubah password menggunakan access token
+router.post('/reset-password', async (req, res) => {
+  const { access_token, password } = req.body;
+
+  if (!access_token || !password) {
+    return res.status(400).json({ error: "Access token dan password baru wajib diisi." });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({ error: "Kata sandi minimal harus 6 karakter." });
+  }
+
+  try {
+    // Verifikasi access_token milik user
+    const { data: { user }, error: userError } = await supabase.authClient.auth.getUser(access_token);
+
+    if (userError || !user) {
+      console.error("User verification failed:", userError?.message);
+      return res.status(400).json({ error: "Token reset tidak valid atau telah kedaluwarsa." });
+    }
+
+    // Update password menggunakan admin API
+    const { error: updateError } = await supabase.auth.admin.updateUserById(user.id, {
+      password: password
+    });
+
+    if (updateError) {
+      console.error("Update password failed:", updateError.message);
+      return res.status(400).json({ error: updateError.message });
+    }
+
+    res.json({ message: "Kata sandi berhasil diperbarui. Silakan login kembali." });
+  } catch (error) {
+    console.error("Reset password server error:", error);
+    res.status(500).json({ error: "Terjadi kesalahan pada server." });
+  }
+});
+
 module.exports = router;

@@ -78,6 +78,11 @@ export default function Login() {
                                 className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm text-slate-900 font-medium focus:ring-2 focus:ring-indigo-500 border-transparent outline-none transition-all placeholder:text-slate-400"
                                 placeholder="••••••••"
                             />
+                            <div className="flex justify-end pr-1 pt-1">
+                                <Link href="/auth/forgot-password" className="text-[11px] font-bold text-indigo-600 hover:underline">
+                                    Lupa Kata Sandi?
+                                </Link>
+                            </div>
                         </div>
 
                         <button
