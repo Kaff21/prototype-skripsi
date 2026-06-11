@@ -35,6 +35,7 @@ const uploadSistem = multer({ storage: storageSistem });
 
 // A. TAMBAH KEGIATAN (Upload Cover Gambar Poster)
 router.post("/tambah", uploadSistem.single('image'), async (req, res) => {
+  req.setTimeout(600000); // Set timeout to 10 minutes for slower uploads
   const { judul, deskripsi, tanggal, waktu, lokasi, anggaran, organization_id } = req.body;
   let image_url = null;
 
@@ -63,16 +64,17 @@ router.post("/tambah", uploadSistem.single('image'), async (req, res) => {
 
 // B. UPLOAD PROPOSAL PDF (VERSI STABIL - AUTO DETECT)
 router.post("/:id/upload-proposal", uploadSistem.single('proposal'), async (req, res) => {
+  req.setTimeout(600000); // Set timeout to 10 minutes for slower uploads
   const { id } = req.params;
   try {
     if (!req.file) return res.status(400).json({ error: "File proposal tidak ditemukan!" });
     
     const namaAsliFile = path.parse(req.file.originalname).name.replace(/\s+/g, '_');
 
-    // 🚨 KITA KEMBALIKAN KE 'image' AGAR BISA TERBACA DI BROWSER DENGAN RAPI
+    // 🚨 KITA UBAH KE 'auto' AGAR LEBIH STABIL & PERMISIF TERHADAP DOKUMEN PDF
     const result = await cloudinary.uploader.upload(req.file.path, {
       folder: 'kegiatan_ormawa/proposal',
-      resource_type: 'image', 
+      resource_type: 'auto', 
       public_id: namaAsliFile + '_' + Date.now(),
     });
 

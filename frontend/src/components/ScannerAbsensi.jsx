@@ -17,13 +17,26 @@ export default function ScannerAbsensi() {
         qrbox: { width: 250, height: 250 },
       });
 
-      scanner.render(async (decodedText) => {
-        scanner.clear();
-        setIsScanning(false);
-        handleAttendance(decodedText);
-      });
+      scanner.render(
+        async (decodedText) => {
+          try {
+            await scanner.clear();
+          } catch (err) {
+            console.error("Gagal menghentikan scanner:", err);
+          }
+          setIsScanning(false);
+          handleAttendance(decodedText);
+        },
+        (error) => {
+          // Abaikan error pembacaan frame QR
+        }
+      );
     }
-    return () => { if (scanner) scanner.clear(); };
+    return () => {
+      if (scanner) {
+        scanner.clear().catch((err) => console.error("Gagal menghentikan scanner saat unmount:", err));
+      }
+    };
   }, [isScanning]);
 
   const handleAttendance = async (qrData) => {
@@ -44,25 +57,27 @@ export default function ScannerAbsensi() {
   return (
     <>
       <div className="w-full">
-        {!isScanning ? (
+        {/* Tombol Buka Kamera hanya muncul jika tidak sedang scan */}
+        <button 
+          onClick={() => setIsScanning(true)}
+          className={`w-full bg-indigo-600 hover:bg-indigo-700 text-white p-8 rounded-[2.5rem] font-black uppercase tracking-widest flex-col items-center gap-4 transition-all shadow-xl shadow-indigo-100 ${isScanning ? 'hidden' : 'flex'}`}
+        >
+          <span className="material-symbols-outlined text-5xl">photo_camera</span>
+          <span>Buka Kamera Scan</span>
+        </button>
+
+        {/* Kontainer Kamera: Harus tetap ter-render di DOM agar tidak crash saat scanner.clear() dipanggil */}
+        <div className={`space-y-4 ${isScanning ? 'block' : 'hidden'}`}>
+          <div id="reader" className="overflow-hidden rounded-3xl border-0"></div>
           <button 
-            onClick={() => setIsScanning(true)}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white p-8 rounded-[2.5rem] font-black uppercase tracking-widest flex flex-col items-center gap-4 transition-all shadow-xl shadow-indigo-100"
+            onClick={async () => {
+              setIsScanning(false);
+            }}
+            className="w-full py-3 text-slate-400 font-bold text-[10px] uppercase tracking-widest"
           >
-            <span className="material-symbols-outlined text-5xl">photo_camera</span>
-            <span>Buka Kamera Scan</span>
+            Matikan Kamera
           </button>
-        ) : (
-          <div className="space-y-4">
-            <div id="reader" className="overflow-hidden rounded-3xl border-0"></div>
-            <button 
-              onClick={() => setIsScanning(false)}
-              className="w-full py-3 text-slate-400 font-bold text-[10px] uppercase tracking-widest"
-            >
-              Matikan Kamera
-            </button>
-          </div>
-        )}
+        </div>
       </div>
 
       <AlertDialog alertState={alertState} onClose={handleClose} />

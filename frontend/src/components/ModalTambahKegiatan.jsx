@@ -87,7 +87,8 @@ export default function ModalTambahKegiatan({ isOpen, onClose, onSuccess, editDa
       onClose();
     } catch (error) {
       console.error("Error:", error);
-      await showAlert({ type: "error", title: "Terjadi Kesalahan!", message: "Gagal menyimpan kegiatan atau proposal. Coba lagi." });
+      const serverMsg = error.response?.data?.message || error.response?.data?.error || error.message || "Gagal menyimpan kegiatan atau proposal. Coba lagi.";
+      await showAlert({ type: "error", title: "Terjadi Kesalahan!", message: `Detail kesalahan: ${serverMsg}` });
     } finally {
       setLoading(false);
     }
@@ -170,7 +171,7 @@ export default function ModalTambahKegiatan({ isOpen, onClose, onSuccess, editDa
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-rose-400 uppercase tracking-widest ml-1">Proposal (PDF)</label>
                 <div className="border-2 border-dashed border-rose-200 p-4 rounded-2xl bg-rose-50 text-center">
-                  <input type="file" accept="application/pdf" onChange={(e) => setProposalFile(e.target.files[0])} required={!editData} className="text-xs w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-rose-100 file:text-rose-700" />
+                  <input type="file" accept="application/pdf" onChange={(e) => setProposalFile(e.target.files[0])} className="text-xs w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-rose-100 file:text-rose-700" />
                 </div>
               </div>
             </div>

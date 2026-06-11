@@ -72,7 +72,7 @@ export default function ActivityCard({ id, judul, deskripsi, orgName, tanggal, l
       <div className={`group bg-white border border-slate-100 rounded-[2rem] overflow-hidden hover:shadow-xl transition-all duration-500 flex flex-col p-3 relative hover:${theme.border}`}>
 
         {isAdmin && (
-          <div className="absolute top-6 left-6 z-10 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute top-6 left-6 z-10 flex gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
             <button onClick={() => onEdit({ id, judul, deskripsi, tanggal, lokasi, status, image })} className={`bg-white/90 backdrop-blur p-2 rounded-xl shadow-lg ${theme.text} hover:bg-white active:scale-90 transition-all`}>
               <span className="material-symbols-outlined text-sm">edit</span>
             </button>
