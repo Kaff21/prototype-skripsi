@@ -3,6 +3,7 @@ import API_BASE_URL from "@/utils/api";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import AlertDialog, { useAlert } from "@/components/Alert";
+import ProfileView from "@/components/ProfileView";
 
 export default function AnggotaAktif() {
   const [anggotaList, setAnggotaList] = useState([]);
@@ -54,6 +55,30 @@ export default function AnggotaAktif() {
       console.error(error);
     }
   };
+
+  if (selectedUser) {
+    return (
+      <>
+        <div className="space-y-6">
+          <div className="flex items-center justify-between mb-2">
+            <button 
+              onClick={() => setSelectedUser(null)}
+              className="flex items-center gap-2 text-slate-600 hover:text-indigo-600 transition-colors font-bold text-sm bg-white border border-slate-200 px-4 py-2.5 rounded-xl shadow-sm hover:shadow-md active:scale-95"
+            >
+              <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+              Kembali ke Daftar Anggota
+            </button>
+          </div>
+          
+          <ProfileView 
+            userProfile={selectedUser} 
+            isOwnProfile={false} 
+          />
+        </div>
+        <AlertDialog alertState={alertState} onClose={handleClose} />
+      </>
+    );
+  }
 
   return (
     <>
@@ -123,63 +148,6 @@ export default function AnggotaAktif() {
                 </div>
               </div>
             ))}
-          </div>
-        )}
-
-        {/* MODAL PROFIL PENGGUNA */}
-        {selectedUser && (
-          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
-            <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-              <div className="relative h-24 bg-gradient-to-r from-indigo-500 to-purple-600">
-                <button 
-                  onClick={() => setSelectedUser(null)}
-                  className="absolute top-4 right-4 text-white hover:text-slate-200 transition-colors bg-black/20 hover:bg-black/40 rounded-full p-1 flex items-center justify-center"
-                >
-                  <span className="material-symbols-outlined text-[20px]">close</span>
-                </button>
-              </div>
-              
-              <div className="px-8 pb-8 pt-0 relative">
-                <div className="relative -mt-12 flex justify-center mb-4">
-                  <div className="w-24 h-24 rounded-full border-4 border-white shadow-md overflow-hidden bg-white flex items-center justify-center font-bold text-3xl text-slate-400 uppercase">
-                    {selectedUser.avatar_url ? (
-                       <img src={selectedUser.avatar_url} alt={selectedUser.full_name} className="w-full h-full object-cover" />
-                    ) : (
-                       selectedUser.full_name?.charAt(0) || "U"
-                    )}
-                  </div>
-                  <div className="absolute bottom-1 right-[110px] sm:right-[130px] w-5 h-5 bg-emerald-500 border-2 border-white rounded-full shadow-sm"></div>
-                </div>
-
-                <div className="text-center mb-6">
-                  <h3 className="text-2xl font-black text-slate-800">{selectedUser.full_name}</h3>
-                  <p className="text-indigo-600 text-xs font-bold uppercase tracking-widest mt-1">
-                    {selectedUser.role === 'admin_ukm' ? 'Admin UKM' : (selectedUser.posisi || selectedUser.role)}
-                  </p>
-                  <p className="text-slate-400 text-xs mt-1 font-medium">
-                    {selectedUser.organizations?.name || "BEM (Sistem Pusat)"}
-                  </p>
-                </div>
-
-                <div className="space-y-4 bg-slate-50 p-4 rounded-2xl border border-slate-100 text-sm">
-                  <div className="flex items-center gap-3 text-slate-600">
-                    <span className="material-symbols-outlined text-slate-400">mail</span>
-                    <span className="font-medium truncate">{selectedUser.email}</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-slate-600">
-                    <span className="material-symbols-outlined text-slate-400">badge</span>
-                    <span className="font-medium">NIM: {selectedUser.nim || "Tidak ada NIM"}</span>
-                  </div>
-                  <div className="flex items-start gap-3 text-slate-600">
-                    <span className="material-symbols-outlined text-slate-400 mt-0.5">format_quote</span>
-                    <p className="font-medium text-slate-500 italic text-xs leading-relaxed">
-                      {selectedUser.bio ? `"${selectedUser.bio}"` : "Belum menuliskan bio apapun."}
-                    </p>
-                  </div>
-                </div>
-
-              </div>
-            </div>
           </div>
         )}
       </div>

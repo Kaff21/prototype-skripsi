@@ -179,7 +179,7 @@ export default function ProfileView({ userProfile, isOwnProfile, onProfileUpdate
                   <span className="material-symbols-outlined text-indigo-500 bg-indigo-50 p-2 rounded-lg">corporate_fare</span>
                   <div>
                     <p className="text-[10px] text-slate-400 font-bold uppercase">Organisasi</p>
-                    <p className="text-sm font-bold text-slate-700">{userProfile?.org_name || 'BEM STIKOM'}</p>
+                    <p className="text-sm font-bold text-slate-700">{userProfile?.org_name || userProfile?.organizations?.name || 'BEM STIKOM'}</p>
                   </div>
                 </div>
 
