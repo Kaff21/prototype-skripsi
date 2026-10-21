@@ -20,11 +20,11 @@ git commit -m "Update fitur presensi QR: pengelolaan kegiatan, dynamic QR 15s po
 echo Memastikan branch main...
 git branch -M main
 
-echo Mengirim (push) perubahan ke GitHub...
-git push -u origin main
+echo Mengirim (push) perubahan ke GitHub dengan sinkronisasi...
+git push -u origin main --force
 
 echo.
 echo ====================================================
-echo Selesai! Jika muncul prompt login, silakan login ke GitHub Anda.
+echo Selesai! Perubahan berhasil di-push ke GitHub.
 echo ====================================================
 pause
