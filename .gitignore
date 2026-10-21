@@ -1,0 +1,23 @@
+# Abaikan node_modules di semua subfolder
+node_modules/
+**/node_modules/
+
+# Environment variables — JANGAN pernah commit ini!
+.env
+**/.env
+.env.local
+.env.production
+
+# Next.js build output
+frontend/.next/
+frontend/out/
+
+# Upload sementara backend
+backend/temp_uploads/
+
+# Firebase config (berisi credentials)
+backend/firebase-config.json
+
+# Log files
+*.log
+npm-debug.log*
